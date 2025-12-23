@@ -51,6 +51,10 @@ export const translations = {
       placeholder: 'Pregunta por "Frontend", "Backend" CV...',
       typing: 'Escribiendo...',
       download: 'Descargar CV PDF'
+    },
+    pagination: {
+      previous: 'Anterior',
+      next: 'Siguiente'
     }
   },
   en: {
@@ -103,6 +107,10 @@ export const translations = {
       placeholder: 'Ask for "Frontend", "Backend" CV...',
       typing: 'Typing...',
       download: 'Download CV PDF'
+    },
+    pagination: {
+      previous: 'Previous',
+      next: 'Next'
     }
   }
 };

@@ -1,175 +1,292 @@
 'use client';
 
 import jsPDF from 'jspdf';
+import { translations } from './translations';
+type Language = 'es' | 'en';
 
-// Información personal
-const personalInfo = {
-    name: 'Eliana Lizeth Barturen Trujillano',
-    email: 'bartureneliana1@gmail.com',
-    phone: '+51 921112707',
-    location: 'Chiclayo, Perú',
-    website: 'ElianaBarturen.github.io',
-    linkedin: 'linkedin.com/in/eliana-barturen',
-    github: 'github.com/ElianaBarturen'
-};
+// Helper types
+interface Achievement {
+    text: string;
+    keywords: string[];
+}
 
-// Educación
-const education = {
-    degree: 'Bachiller en Ingeniería de Sistemas',
-    university: 'Universidad Católica Santo Toribio de Mogrovejo',
-    location: 'Chiclayo, Perú',
-    period: 'Agosto 2019 - Julio 2025'
-};
+interface CVData {
+    personalInfo: {
+        name: string;
+        email: string;
+        phone: string;
+        location: string;
+        website: string;
+        linkedin: string;
+        github: string;
+    };
+    education: {
+        degree: string;
+        university: string;
+        location: string;
+        period: string;
+    };
+    experience: {
+        company: string;
+        role: string;
+        period: string;
+        achievements: string[];
+    }[];
+    skills: Record<string, { technical: string[]; soft: string[] }>;
+    projects: Record<string, { title: string; description: string }[]>;
+}
 
-// Experiencia laboral completa
-const experiences = [
-    {
-        company: 'InnovaHtec',
-        role: 'Desarrollador Full Stack',
-        period: 'Octubre 2024 - Diciembre 2025',
-        achievements: [
-            'Desarrollo de sistemas multiplataformas con Flutter.',
-            'Implementación de soluciones cloud con AWS (DynamoDB, S3).',
-            'Gestión de base de datos PostgreSQL, MySQL, MongoDB y Firebase.',
-            'Liderazgo de proyectos y gestión de equipos de desarrollo.',
-            'Gestión de despliegues y monitoreo de sistemas en entornos de producción Linux.',
-            'Implementación de Firebase para sincronización y manejo de datos en tiempo real.',
-            'Desarrollo de soluciones de detección de objetos con Python, OpenCV y TensorFlow.',
-            'Estructuración de proyectos Frontend y Backend con arquitecturas limpias.',
-            'Desarrollo de red social multiplataforma con NestJS, Flutter y WebSockets.',
-            'Implementación de sistemas de moderación inteligente con Python para detección de contenido indebido.',
-            'Diseño de algoritmos de recomendación y gestión de preferencias personalizadas.',
-            'Desarrollo de agentes de IA para gestión de consultas y generación de documentos.',
-            'Desarrollo de apps móviles Android nativas con Kotlin y multiplataforma con Flutter.',
-            'Mejora de interfaces UI/UX aplicando theming centralizado y diseño responsive.',
-            'Implementación de arquitecturas limpias (Clean Architecture, MVVM).',
-            'Uso de gestión de estado (Provider, Riverpod, Bloc) según complejidad del proyecto.',
-            'Desarrollo y mantenimiento de apps Android con Kotlin optimizadas y escalables.',
-            'Migración de bases de datos SQL a NoSQL con APIs para integración con Power BI.',
-            'Participación activa en metodologías ágiles (Scrum) con sprints y reuniones diarias.'
-        ]
+// Datos por idioma
+const cvData: Record<Language, CVData> = {
+    es: {
+        personalInfo: {
+            name: 'Eliana Lizeth Barturen Trujillano',
+            email: 'bartureneliana1@gmail.com',
+            phone: '+51 921112707',
+            location: 'Chiclayo, Perú',
+            website: 'ElianaBarturen.github.io',
+            linkedin: 'linkedin.com/in/eliana-barturen',
+            github: 'github.com/ElianaBarturen'
+        },
+        education: {
+            degree: 'Bachiller en Ingeniería de Sistemas',
+            university: 'Universidad Católica Santo Toribio de Mogrovejo',
+            location: 'Chiclayo, Perú',
+            period: 'Agosto 2019 - Julio 2025'
+        },
+        experience: [
+            {
+                company: 'InnovaHtec',
+                role: 'Desarrollador Full Stack',
+                period: 'Oct 2024 - Dic 2025',
+                achievements: [
+                    'Desarrollo de sistemas multiplataformas con Flutter.',
+                    'Implementación de soluciones cloud con AWS (DynamoDB, S3).',
+                    'Gestión de base de datos PostgreSQL, MySQL, MongoDB y Firebase.',
+                    'Liderazgo de proyectos y gestión de equipos de desarrollo.',
+                    'Gestión de despliegues y monitoreo de sistemas en entornos de producción Linux.',
+                    'Implementación de Firebase para sincronización y manejo de datos en tiempo real.',
+                    'Desarrollo de soluciones de detección de objetos con Python, OpenCV y TensorFlow.',
+                    'Estructuración de proyectos Frontend y Backend con arquitecturas limpias.',
+                    'Desarrollo de red social multiplataforma con NestJS, Flutter y WebSockets.',
+                    'Implementación de sistemas de moderación inteligente con Python.',
+                    'Diseño de algoritmos de recomendación y gestión de preferencias personalizadas.',
+                    'Desarrollo de agentes de IA para gestión de consultas y generación de documentos.',
+                    'Desarrollo de apps móviles Android nativas con Kotlin y multiplataforma con Flutter.',
+                    'Mejora de interfaces UI/UX aplicando theming centralizado y diseño responsive.',
+                    'Migración de bases de datos SQL a NoSQL con APIs para integración con Power BI.'
+                ]
+            },
+            {
+                company: 'Unidad Ejecutora de Salud Santa Cruz - OITE',
+                role: 'Practicante de Sistemas',
+                period: 'Ene 2024 - Feb 2024',
+                achievements: [
+                    'Desarrollo de consultas SQL avanzadas para extracción y análisis de información.',
+                    'Diseño y mantenimiento de estructuras de bases de datos PostgreSQL y SQL Server.',
+                    'Soporte técnico en sistemas institucionales SIGA y SIAF.',
+                    'Gestión y administración de usuarios con asignación de accesos y permisos.'
+                ]
+            }
+        ],
+        skills: {
+            'Full Stack': {
+                technical: [
+                    'Frontend: React, Next.js, TypeScript, JavaScript, HTML5, CSS3, Tailwind',
+                    'Backend: NestJS, Node.js, Python (Django, Flask), Java, Laravel',
+                    'Mobile: Flutter, Kotlin (Android), React Native',
+                    'DB: PostgreSQL, MySQL, MongoDB, Firebase, DynamoDB',
+                    'Cloud/DevOps: AWS, Docker, Linux, Git/GitHub',
+                    'Architecture: Clean Arch, MVVM, Microservices, SOLID',
+                    'AI/ML: Python, OpenCV, TensorFlow'
+                ],
+                soft: ['Liderazgo técnico', 'Trabajo en equipo', 'Scrum', 'Comunicación efectiva', 'Resolución de problemas', 'Adaptabilidad']
+            },
+            'Frontend': {
+                technical: ['React, Next.js, Flutter Web', 'TypeScript, JavaScript, Dart', 'Tailwind CSS, CSS Modules', 'State Mgmt (Provider, Riverpod, Bloc)', 'UI/UX Design, Responsive', 'Figma, Git'],
+                soft: ['Atención al detalle', 'Creatividad', 'Comunicación', 'Adaptabilidad']
+            },
+            'Backend': {
+                technical: ['NestJS, Node.js, Django, Flask', 'TypeScript, Python, Java', 'PostgreSQL, MySQL, MongoDB, DynamoDB', 'REST, WebSockets, GraphQL', 'AWS, Docker, Linux', 'Clean Architecture, Microservices'],
+                soft: ['Pensamiento analítico', 'Resolución de problemas', 'Trabajo en equipo']
+            },
+            'Mobile': {
+                technical: ['Flutter (iOS, Android, Web)', 'Kotlin (Android Native)', 'Firebase, FCM, Analytics', 'Clean Architecture, MVVM', 'State Mgmt (Bloc, Riverpod)', 'Material Design'],
+                soft: ['Experiencia de usuario', 'Optimización', 'Testing móvil']
+            },
+            'QA': {
+                technical: ['Jest, Cypress, Selenium', 'SQL Queries, Data Validation', 'Power BI, Excel', 'Postman, Swagger', 'Scrum, Documentation', 'SIGA, SIAF'],
+                soft: ['Atención al detalle', 'Pensamiento crítico', 'Documentación']
+            }
+        },
+        projects: {
+            'Full Stack': [
+                { title: 'Plataforma Fintech', description: 'Backend con Clean Architecture, NestJS, TypeScript y PostgreSQL.' },
+                { title: 'Red Social Multiplataforma', description: 'Flutter + NestJS + WebSockets y Microservicios.' },
+                { title: 'Sistema de Gestión de Viajes', description: 'App Flutter + Firebase + Python Django.' },
+                { title: 'Sistema de Laboratorio', description: 'Java Desktop + PostgreSQL para gestión de productos.' }
+            ],
+            'Frontend': [
+                { title: 'Red Social Multiplataforma', description: 'UI Flutter con theming centralizado y responsive.' },
+                { title: 'Portfolio Personal', description: 'Next.js + TypeScript con diseño Neo-Brutalism.' },
+                { title: 'App de Gestión de Viajes', description: 'UX optimizada para múltiples dispositivos.' }
+            ],
+            'Backend': [
+                { title: 'Plataforma Fintech', description: 'APIs REST con NestJS, Prisma y SOLID.' },
+                { title: 'Red Social con WebSockets', description: 'Backend real-time con microservicios.' },
+                { title: 'Migración SQL a NoSQL', description: 'API de integración de datos para Power BI.' }
+            ],
+            'Mobile': [
+                { title: 'Red Social App', description: 'Flutter con WebSockets y Clean Architecture.' },
+                { title: 'App Gestión de Viajes', description: 'Flutter + Firebase Realtime Database.' },
+                { title: 'Diagnóstico con IA', description: 'Android Java + Backend Flask ML.' }
+            ],
+            'QA': [
+                { title: 'Validación de Datos', description: 'Consultas SQL avanzadas para reportes institucionales.' },
+                { title: 'Testing Plataforma', description: 'Pruebas de flujos de usuario y APIs.' }
+            ]
+        }
     },
-    {
-        company: 'Unidad Ejecutora de Salud Santa Cruz - OITE',
-        role: 'Practicante de Sistemas',
-        period: 'Enero 2024 - Febrero 2024',
-        achievements: [
-            'Desarrollo de consultas SQL avanzadas para extracción, análisis y validación de información.',
-            'Diseño y mantenimiento de estructuras de bases de datos PostgreSQL y SQL Server.',
-            'Soporte técnico en sistemas institucionales SIGA y SIAF.',
-            'Gestión y administración de usuarios con asignación de accesos y permisos.',
-            'Participación en cruce de información de diferentes microrredes.'
-        ]
+    en: {
+        personalInfo: {
+            name: 'Eliana Lizeth Barturen Trujillano',
+            email: 'bartureneliana1@gmail.com',
+            phone: '+51 921112707',
+            location: 'Chiclayo, Peru',
+            website: 'ElianaBarturen.github.io',
+            linkedin: 'linkedin.com/in/eliana-barturen',
+            github: 'github.com/ElianaBarturen'
+        },
+        education: {
+            degree: 'Systems Engineering Bachelor',
+            university: 'Universidad Católica Santo Toribio de Mogrovejo',
+            location: 'Chiclayo, Peru',
+            period: 'August 2019 - July 2025'
+        },
+        experience: [
+            {
+                company: 'InnovaHtec',
+                role: 'Full Stack Developer',
+                period: 'Oct 2024 - Dec 2025',
+                achievements: [
+                    'Cross-platform development using Flutter.',
+                    'Cloud solutions implementation with AWS (DynamoDB, S3).',
+                    'Database management: PostgreSQL, MySQL, MongoDB, Firebase.',
+                    'Project leadership and development team management.',
+                    'Deployment management and system monitoring in Linux environments.',
+                    'Firebase implementation for real-time data synchronization.',
+                    'Object detection solutions with Python, OpenCV, and TensorFlow.',
+                    'Frontend and Backend structuring with clean architectures.',
+                    'Cross-platform social network with NestJS, Flutter, and WebSockets.',
+                    'Intelligent moderation systems with Python for content detection.',
+                    'Recommendation algorithms and personalized preference management.',
+                    'AI agents development for inquiries and document generation.',
+                    'Android native apps (Kotlin) and cross-platform (Flutter) development.',
+                    'UI/UX improvements using centralized theming and responsive design.',
+                    'SQL to NoSQL migration with APIs for Power BI integration.'
+                ]
+            },
+            {
+                company: 'Health Executing Unit Santa Cruz - OITE',
+                role: 'Systems Intern',
+                period: 'Jan 2024 - Feb 2024',
+                achievements: [
+                    'Advanced SQL queries for information extraction and analysis.',
+                    'Design and maintenance of PostgreSQL and SQL Server databases.',
+                    'Technical support for SIGA and SIAF institutional systems.',
+                    'User management and access control administration.'
+                ]
+            }
+        ],
+        skills: {
+            'Full Stack': {
+                technical: [
+                    'Frontend: React, Next.js, TypeScript, JavaScript, HTML5, CSS3, Tailwind',
+                    'Backend: NestJS, Node.js, Python (Django, Flask), Java, Laravel',
+                    'Mobile: Flutter, Kotlin (Android), React Native',
+                    'DB: PostgreSQL, MySQL, MongoDB, Firebase, DynamoDB',
+                    'Cloud/DevOps: AWS, Docker, Linux, Git/GitHub',
+                    'Architecture: Clean Arch, MVVM, Microservices, SOLID',
+                    'AI/ML: Python, OpenCV, TensorFlow'
+                ],
+                soft: ['Technical Leadership', 'Teamwork', 'Scrum', 'Effective Communication', 'Problem Solving', 'Adaptability']
+            },
+            'Frontend': {
+                technical: ['React, Next.js, Flutter Web', 'TypeScript, JavaScript, Dart', 'Tailwind CSS, CSS Modules', 'State Mgmt (Provider, Riverpod, Bloc)', 'UI/UX Design, Responsive', 'Figma, Git'],
+                soft: ['Attention to Detail', 'Creativity', 'Communication', 'Adaptability']
+            },
+            'Backend': {
+                technical: ['NestJS, Node.js, Django, Flask', 'TypeScript, Python, Java', 'PostgreSQL, MySQL, MongoDB, DynamoDB', 'REST, WebSockets, GraphQL', 'AWS, Docker, Linux', 'Clean Architecture, Microservices'],
+                soft: ['Analytical Thinking', 'Problem Solving', 'Teamwork']
+            },
+            'Mobile': {
+                technical: ['Flutter (iOS, Android, Web)', 'Kotlin (Android Native)', 'Firebase, FCM, Analytics', 'Clean Architecture, MVVM', 'State Mgmt (Bloc, Riverpod)', 'Material Design'],
+                soft: ['User Experience', 'Performance Optimization', 'Mobile Testing']
+            },
+            'QA': {
+                technical: ['Jest, Cypress, Selenium', 'SQL Queries, Data Validation', 'Power BI, Excel', 'Postman, Swagger', 'Scrum, Documentation', 'SIGA, SIAF'],
+                soft: ['Attention to Detail', 'Critical Thinking', 'Documentation']
+            }
+        },
+        projects: {
+            'Full Stack': [
+                { title: 'Fintech Platform', description: 'Backend with Clean Architecture, NestJS, TypeScript and PostgreSQL.' },
+                { title: 'Cross-platform Social Network', description: 'Flutter + NestJS + WebSockets and Microservices.' },
+                { title: 'Travel Management System', description: 'Flutter App + Firebase + Python Django.' },
+                { title: 'Laboratory System', description: 'Java Desktop + PostgreSQL for product management.' }
+            ],
+            'Frontend': [
+                { title: 'Social Network UI', description: 'Flutter UI with centralized theming and responsive design.' },
+                { title: 'Personal Portfolio', description: 'Next.js + TypeScript with Neo-Brutalism design.' },
+                { title: 'Travel App UX', description: 'Optimized UX for multiple devices.' }
+            ],
+            'Backend': [
+                { title: 'Fintech Platform', description: 'REST APIs with NestJS, Prisma and SOLID.' },
+                { title: 'Real-time Social Network', description: 'Backend with WebSockets and microservices.' },
+                { title: 'SQL to NoSQL Migration', description: 'Data integration API for Power BI.' }
+            ],
+            'Mobile': [
+                { title: 'Social Network App', description: 'Flutter with WebSockets and Clean Architecture.' },
+                { title: 'Travel App', description: 'Flutter + Firebase Realtime Database.' },
+                { title: 'AI Diagnosis App', description: 'Android Java + Flask ML Backend.' }
+            ],
+            'QA': [
+                { title: 'Data Validation', description: 'Advanced SQL queries for institutional reports.' },
+                { title: 'Platform Testing', description: 'User flow and API testing.' }
+            ]
+        }
     }
-];
-
-// Skills por categoría
-const skillsByRole: Record<string, { technical: string[]; soft: string[] }> = {
-    'Full Stack': {
-        technical: [
-            'Frontend: React, Next.js, TypeScript, JavaScript, HTML5, CSS3, Tailwind CSS',
-            'Backend: NestJS, Node.js, Python (Django, Flask), Java, Laravel',
-            'Mobile: Flutter, React Native, Kotlin (Android nativo)',
-            'Bases de Datos: PostgreSQL, MySQL, MongoDB, Firebase, SQL Server, DynamoDB',
-            'Cloud & DevOps: AWS (S3, DynamoDB), Docker, Linux, Git/GitHub',
-            'Arquitectura: Clean Architecture, MVVM, Microservicios, APIs REST',
-            'Tiempo Real: WebSockets, Firebase Realtime Database',
-            'IA/ML: Python, OpenCV, TensorFlow (detección de objetos)',
-            'Herramientas: Prisma ORM, Power BI, Swagger, Postman'
-        ],
-        soft: ['Liderazgo técnico', 'Trabajo en equipo', 'Metodologías ágiles (Scrum)', 'Comunicación efectiva', 'Resolución de problemas', 'Adaptabilidad']
-    },
-    'Frontend': {
-        technical: [
-            'Frameworks: React, Next.js, Flutter (Web)',
-            'Lenguajes: TypeScript, JavaScript, Dart, HTML5, CSS3',
-            'Estilos: Tailwind CSS, CSS Modules, Responsive Design',
-            'Estado: Provider, Riverpod, Bloc, Redux',
-            'UI/UX: Theming centralizado, diseño responsive multi-dispositivo',
-            'Herramientas: Git, Figma, Chrome DevTools',
-            'Testing: Jest, Cypress'
-        ],
-        soft: ['Atención al detalle', 'Creatividad', 'Comunicación con equipos de diseño', 'Adaptabilidad']
-    },
-    'Backend': {
-        technical: [
-            'Frameworks: NestJS, Node.js, Express, Django, Flask, Laravel',
-            'Lenguajes: TypeScript, Python, Java, PHP',
-            'Bases de Datos: PostgreSQL, MySQL, MongoDB, Firebase, DynamoDB',
-            'APIs: REST, WebSockets, GraphQL',
-            'ORM: Prisma, TypeORM, SQLAlchemy',
-            'Cloud: AWS (S3, DynamoDB), Linux, Docker',
-            'Arquitectura: Clean Architecture, Microservicios, SOLID',
-            'Seguridad: JWT, OAuth, autenticación/autorización'
-        ],
-        soft: ['Pensamiento analítico', 'Resolución de problemas', 'Trabajo en equipo', 'Documentación técnica']
-    },
-    'Mobile': {
-        technical: [
-            'Flutter: Desarrollo multiplataforma (iOS, Android, Web)',
-            'Kotlin: Desarrollo Android nativo',
-            'Arquitectura: Clean Architecture, MVVM, BLoC',
-            'Estado: Provider, Riverpod, Bloc',
-            'Backend: Firebase, APIs REST, WebSockets',
-            'UI/UX: Material Design, diseño responsive, theming',
-            'Almacenamiento: SQLite, Hive, Shared Preferences',
-            'Notificaciones: Firebase Cloud Messaging (FCM)'
-        ],
-        soft: ['Atención a la experiencia de usuario', 'Optimización de rendimiento', 'Testing en múltiples dispositivos']
-    },
-    'QA': {
-        technical: [
-            'Testing: Jest, Cypress, Selenium',
-            'Bases de Datos: Consultas SQL avanzadas, validación de datos',
-            'Análisis: Power BI, Excel avanzado',
-            'Herramientas: Postman, Swagger, Git',
-            'Metodologías: Scrum, documentación de casos de prueba',
-            'Sistemas: SIGA, SIAF (sistemas institucionales)'
-        ],
-        soft: ['Atención al detalle', 'Pensamiento crítico', 'Comunicación clara', 'Documentación']
-    }
-};
-
-// Proyectos por rol
-const projectsByRole: Record<string, Array<{ title: string; description: string }>> = {
-    'Full Stack': [
-        { title: 'Plataforma Fintech', description: 'Backend con Clean Architecture y SOLID, NestJS, TypeScript, PostgreSQL con Prisma ORM.' },
-        { title: 'Red Social Multiplataforma', description: 'Flutter + NestJS + WebSockets para comunicación en tiempo real. Microservicios.' },
-        { title: 'Sistema de Gestión de Viajes', description: 'App móvil Flutter + Firebase + backend Python Django.' },
-        { title: 'Sistema de Laboratorio', description: 'Aplicación de escritorio Java + PostgreSQL para gestión de productos.' }
-    ],
-    'Frontend': [
-        { title: 'Red Social Multiplataforma', description: 'Interfaz Flutter con theming centralizado, diseño responsive.' },
-        { title: 'Portfolio Personal', description: 'Next.js + TypeScript con diseño Neo-Brutalism responsive.' },
-        { title: 'App de Gestión de Viajes', description: 'Interfaz Flutter con UI/UX optimizada para múltiples dispositivos.' }
-    ],
-    'Backend': [
-        { title: 'Plataforma Fintech', description: 'Arquitectura Clean + SOLID, APIs REST con NestJS y TypeScript.' },
-        { title: 'Red Social con WebSockets', description: 'Backend NestJS con comunicación en tiempo real y microservicios.' },
-        { title: 'Migración SQL a NoSQL', description: 'API para consumo de datos e integración con Power BI.' },
-        { title: 'Sistema de Moderación IA', description: 'Python para detección automática de contenido indebido.' }
-    ],
-    'Mobile': [
-        { title: 'Red Social Multiplataforma', description: 'App Flutter con WebSockets, Firebase y arquitectura limpia.' },
-        { title: 'App de Gestión de Viajes', description: 'Flutter + Firebase Realtime Database, equipo de 4 desarrolladores.' },
-        { title: 'E-commerce Móvil', description: 'App Android para tienda virtual con Flask y MySQL.' },
-        { title: 'Diagnóstico de Preeclampsia', description: 'App Android Java con backend Flask y Machine Learning.' }
-    ],
-    'QA': [
-        { title: 'Validación de Datos Institucionales', description: 'Consultas SQL avanzadas en PostgreSQL y SQL Server.' },
-        { title: 'Testing de Red Social', description: 'Pruebas de APIs, WebSockets y flujos de usuario.' },
-        { title: 'Depuración de Código Legado', description: 'Mejora y debugging de sistemas existentes.' }
-    ]
 };
 
 type CVRole = 'Full Stack' | 'Frontend' | 'Backend' | 'Mobile' | 'QA';
 
-export function generateCV(role: CVRole): void {
+export function generateCV(role: CVRole, lang: Language = 'es'): void {
     const doc = new jsPDF({
         orientation: 'portrait',
         unit: 'mm',
         format: 'a4'
     });
+
+    const data = cvData[lang];
+    const labels = lang === 'es' ? {
+        profile: 'PERFIL PROFESIONAL',
+        experience: 'EXPERIENCIA LABORAL',
+        education: 'EDUCACIÓN',
+        skills: 'HABILIDADES TÉCNICAS',
+        projects: 'PROYECTOS DESTACADOS',
+        softSkills: 'HABILIDADES BLANDAS',
+        languages: 'IDIOMAS',
+        langText: 'Español (Nativo)  •  Inglés (Intermedio)'
+    } : {
+        profile: 'PROFESSIONAL PROFILE',
+        experience: 'WORK EXPERIENCE',
+        education: 'EDUCATION',
+        skills: 'TECHNICAL SKILLS',
+        projects: 'FEATURED PROJECTS',
+        softSkills: 'SOFT SKILLS',
+        languages: 'LANGUAGES',
+        langText: 'Spanish (Native)  •  English (Intermediate)'
+    };
 
     const pageWidth = doc.internal.pageSize.getWidth();
     const pageHeight = doc.internal.pageSize.getHeight();
@@ -179,7 +296,7 @@ export function generateCV(role: CVRole): void {
 
     // Colores
     const primaryColor: [number, number, number] = [0, 0, 0];
-    const accentColor: [number, number, number] = [100, 100, 100];
+    const accentColor: [number, number, number] = [80, 80, 80];
 
     // Helper para agregar nueva página si es necesario
     const checkNewPage = (requiredSpace: number) => {
@@ -197,7 +314,7 @@ export function generateCV(role: CVRole): void {
     doc.setTextColor(255, 255, 255);
     doc.setFont('helvetica', 'bold');
     doc.setFontSize(22);
-    doc.text(personalInfo.name.toUpperCase(), margin, 18);
+    doc.text(data.personalInfo.name.toUpperCase(), margin, 18);
 
     // Rol
     doc.setFontSize(12);
@@ -206,8 +323,8 @@ export function generateCV(role: CVRole): void {
 
     // Contacto en header
     doc.setFontSize(9);
-    const contactLine1 = `${personalInfo.email}  |  ${personalInfo.phone}  |  ${personalInfo.location}`;
-    const contactLine2 = `${personalInfo.website}  |  ${personalInfo.linkedin}`;
+    const contactLine1 = `${data.personalInfo.email}  |  ${data.personalInfo.phone}  |  ${data.personalInfo.location}`;
+    const contactLine2 = `${data.personalInfo.website}  |  ${data.personalInfo.linkedin}`;
     doc.text(contactLine1, margin, 34);
     doc.text(contactLine2, margin, 40);
 
@@ -217,7 +334,7 @@ export function generateCV(role: CVRole): void {
     doc.setTextColor(...primaryColor);
     doc.setFont('helvetica', 'bold');
     doc.setFontSize(11);
-    doc.text('PERFIL PROFESIONAL', margin, y);
+    doc.text(labels.profile, margin, y);
 
     y += 2;
     doc.setDrawColor(0, 0, 0);
@@ -229,9 +346,11 @@ export function generateCV(role: CVRole): void {
     doc.setFontSize(9);
     doc.setTextColor(...accentColor);
 
-    const profileText = `Desarrollador ${role} con experiencia en desarrollo de aplicaciones web, móviles y de escritorio. Especializado en arquitecturas limpias, metodologías ágiles y soluciones tecnológicas innovadoras. Bachiller en Ingeniería de Sistemas con sólida formación académica y experiencia práctica en proyectos reales de alta complejidad.`;
+    const roleText = lang === 'es'
+        ? `Desarrollador ${role} con experiencia en desarrollo de aplicaciones web, móviles y de escritorio. Especializado en arquitecturas limpias, metodologías ágiles y soluciones tecnológicas innovadoras.`
+        : `${role} Developer with experience in web, mobile, and desktop application development. Specialized in clean architectures, agile methodologies, and innovative technological solutions.`;
 
-    const profileLines = doc.splitTextToSize(profileText, contentWidth);
+    const profileLines = doc.splitTextToSize(roleText, contentWidth);
     doc.text(profileLines, margin, y);
     y += profileLines.length * 4 + 8;
 
@@ -240,13 +359,13 @@ export function generateCV(role: CVRole): void {
     doc.setTextColor(...primaryColor);
     doc.setFont('helvetica', 'bold');
     doc.setFontSize(11);
-    doc.text('EXPERIENCIA LABORAL', margin, y);
+    doc.text(labels.experience, margin, y);
 
     y += 2;
     doc.line(margin, y, pageWidth - margin, y);
     y += 6;
 
-    experiences.forEach((exp, expIdx) => {
+    data.experience.forEach((exp) => {
         checkNewPage(30);
 
         // Empresa y período
@@ -266,32 +385,14 @@ export function generateCV(role: CVRole): void {
         doc.text(exp.role, margin, y);
         y += 6;
 
-        // Logros (filtrar por rol)
+        // Logros (todos para Full Stack o filtrados si se quiere, aquí mostrando todos o top N)
         doc.setFont('helvetica', 'normal');
         doc.setFontSize(8.5);
 
-        // Seleccionar logros relevantes para el rol
-        let relevantAchievements = exp.achievements;
-        if (role !== 'Full Stack') {
-            const keywords: Record<string, string[]> = {
-                'Frontend': ['UI', 'UX', 'Flutter', 'React', 'interfaz', 'responsive', 'diseño', 'theming'],
-                'Backend': ['API', 'backend', 'base de datos', 'PostgreSQL', 'NestJS', 'Django', 'arquitectura', 'microservicio', 'Cloud', 'AWS'],
-                'Mobile': ['móvil', 'Flutter', 'Android', 'Kotlin', 'Firebase', 'app', 'mobile'],
-                'QA': ['testing', 'SQL', 'validación', 'análisis', 'consultas', 'SIGA', 'SIAF']
-            };
+        // Mostramos hasta 6-8 logros para que no sea muy largo, o todos
+        const showAchievements = exp.achievements.slice(0, 8);
 
-            relevantAchievements = exp.achievements.filter(ach =>
-                keywords[role]?.some(kw => ach.toLowerCase().includes(kw.toLowerCase()))
-            ).slice(0, 5);
-
-            if (relevantAchievements.length < 3) {
-                relevantAchievements = exp.achievements.slice(0, 4);
-            }
-        } else {
-            relevantAchievements = exp.achievements.slice(0, 6);
-        }
-
-        relevantAchievements.forEach(achievement => {
+        showAchievements.forEach(achievement => {
             checkNewPage(8);
             const bulletText = `•  ${achievement}`;
             const lines = doc.splitTextToSize(bulletText, contentWidth - 5);
@@ -307,7 +408,7 @@ export function generateCV(role: CVRole): void {
     doc.setTextColor(...primaryColor);
     doc.setFont('helvetica', 'bold');
     doc.setFontSize(11);
-    doc.text('EDUCACIÓN', margin, y);
+    doc.text(labels.education, margin, y);
 
     y += 2;
     doc.line(margin, y, pageWidth - margin, y);
@@ -315,15 +416,15 @@ export function generateCV(role: CVRole): void {
 
     doc.setFont('helvetica', 'bold');
     doc.setFontSize(10);
-    doc.text(education.degree, margin, y);
+    doc.text(data.education.degree, margin, y);
     doc.setFont('helvetica', 'normal');
     doc.setFontSize(9);
-    doc.text(education.period, pageWidth - margin - doc.getTextWidth(education.period), y);
+    doc.text(data.education.period, pageWidth - margin - doc.getTextWidth(data.education.period), y);
     y += 5;
 
     doc.setFont('helvetica', 'italic');
     doc.setTextColor(...accentColor);
-    doc.text(`${education.university} - ${education.location}`, margin, y);
+    doc.text(`${data.education.university} - ${data.education.location}`, margin, y);
     y += 10;
 
     // ========== HABILIDADES TÉCNICAS ==========
@@ -331,13 +432,13 @@ export function generateCV(role: CVRole): void {
     doc.setTextColor(...primaryColor);
     doc.setFont('helvetica', 'bold');
     doc.setFontSize(11);
-    doc.text('HABILIDADES TÉCNICAS', margin, y);
+    doc.text(labels.skills, margin, y);
 
     y += 2;
     doc.line(margin, y, pageWidth - margin, y);
     y += 6;
 
-    const skills = skillsByRole[role];
+    const skills = data.skills[role] || data.skills['Full Stack'];
     doc.setFont('helvetica', 'normal');
     doc.setFontSize(8.5);
     doc.setTextColor(...accentColor);
@@ -356,13 +457,13 @@ export function generateCV(role: CVRole): void {
     doc.setTextColor(...primaryColor);
     doc.setFont('helvetica', 'bold');
     doc.setFontSize(11);
-    doc.text('PROYECTOS DESTACADOS', margin, y);
+    doc.text(labels.projects, margin, y);
 
     y += 2;
     doc.line(margin, y, pageWidth - margin, y);
     y += 6;
 
-    const projects = projectsByRole[role];
+    const projects = data.projects[role] || data.projects['Full Stack'];
     projects.forEach(project => {
         checkNewPage(12);
         doc.setFont('helvetica', 'bold');
@@ -386,7 +487,7 @@ export function generateCV(role: CVRole): void {
     doc.setTextColor(...primaryColor);
     doc.setFont('helvetica', 'bold');
     doc.setFontSize(11);
-    doc.text('HABILIDADES BLANDAS', margin, y);
+    doc.text(labels.softSkills, margin, y);
 
     y += 2;
     doc.line(margin, y, pageWidth - margin, y);
@@ -405,7 +506,7 @@ export function generateCV(role: CVRole): void {
     doc.setTextColor(...primaryColor);
     doc.setFont('helvetica', 'bold');
     doc.setFontSize(11);
-    doc.text('IDIOMAS', margin, y);
+    doc.text(labels.languages, margin, y);
 
     y += 2;
     doc.line(margin, y, pageWidth - margin, y);
@@ -414,16 +515,17 @@ export function generateCV(role: CVRole): void {
     doc.setFont('helvetica', 'normal');
     doc.setFontSize(9);
     doc.setTextColor(...accentColor);
-    doc.text('Español (Nativo)  •  Inglés (Intermedio)', margin, y);
+    doc.text(labels.langText, margin, y);
 
     // ========== FOOTER ==========
     const footerY = pageHeight - 10;
     doc.setFontSize(8);
     doc.setTextColor(150, 150, 150);
-    doc.text(personalInfo.website, pageWidth / 2, footerY, { align: 'center' });
+    doc.text(data.personalInfo.website, pageWidth / 2, footerY, { align: 'center' });
 
     // Descargar
-    doc.save(`CV_ElianaBarturen_${role.replace(' ', '')}.pdf`);
+    const suffix = lang === 'en' ? '_EN' : '_ES';
+    doc.save(`CV_ElianaBarturen_${role.replace(' ', '')}${suffix}.pdf`);
 }
 
 export const cvRoles: CVRole[] = ['Full Stack', 'Frontend', 'Backend', 'Mobile', 'QA'];

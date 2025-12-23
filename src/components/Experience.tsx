@@ -1,12 +1,16 @@
 'use client';
 
+import { useMemo } from 'react';
 import { motion } from 'framer-motion';
 import { useLanguage } from '../contexts/LanguageContext';
-import { portfolioData } from '../data/portfolio';
+import { getPortfolioData } from '../data/portfolio';
 import { Briefcase } from 'lucide-react';
 
 export default function Experience() {
-  const { t } = useLanguage();
+  const { t, language } = useLanguage();
+  
+  // Obtener datos del portfolio según el idioma actual
+  const portfolioData = useMemo(() => getPortfolioData(language), [language]);
 
   return (
     <section id="experience" className="py-20 px-6 bg-white w-full">
