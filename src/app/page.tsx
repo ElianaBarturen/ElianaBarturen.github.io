@@ -1,11 +1,11 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useMemo } from 'react';
 import { motion } from 'framer-motion';
 import LanguageSwitcher from '../components/LanguageSwitcher';
 import CVModal from '../components/CVModal';
 import { useLanguage } from '../contexts/LanguageContext';
-import { portfolioData } from '../data/portfolio';
+import { getPortfolioData } from '../data/portfolio';
 import {
   Download,
   Github,
@@ -21,7 +21,13 @@ import {
   ArrowRight,
   ChevronDown,
   MapPin,
-  Phone
+  Phone,
+  Wallet,
+  Globe,
+  Plane,
+  FlaskConical,
+  Truck,
+  HeartPulse
 } from 'lucide-react';
 
 const categoryIcons: Record<string, React.ElementType> = {
@@ -40,6 +46,10 @@ const categoryColors: Record<string, { bg: string; text: string }> = {
   DevOps: { bg: '#84CC16', text: '#000' },
 };
 
+// Iconos y colores para proyectos
+const projectIcons = [Wallet, Globe, Plane, FlaskConical, Truck, HeartPulse];
+const projectColors = ['#FF6B9D', '#4ECDC4', '#A855F7', '#FFEB3B', '#84CC16', '#FF9500'];
+
 // Información de contacto
 const contactInfo = {
   email: 'bartureneliana1@gmail.com',
@@ -50,8 +60,11 @@ const contactInfo = {
 };
 
 export default function Home() {
-  const { t } = useLanguage();
+  const { t, language } = useLanguage();
   const [isCVModalOpen, setIsCVModalOpen] = useState(false);
+
+  // Obtener datos del portfolio según el idioma actual
+  const portfolioData = useMemo(() => getPortfolioData(language), [language]);
 
   const skillsByCategory = portfolioData.skills.reduce((acc, skill) => {
     if (!acc[skill.category]) {
@@ -606,7 +619,7 @@ export default function Home() {
                   display: 'flex',
                   alignItems: 'center',
                   justifyContent: 'center',
-                  backgroundColor: ['#FF6B9D', '#4ECDC4', '#A855F7', '#FFEB3B', '#84CC16', '#FF9500'][idx % 6],
+                  backgroundColor: projectColors[idx % projectColors.length],
                   borderBottom: '3px solid #000',
                   position: 'relative'
                 }}>
@@ -617,10 +630,12 @@ export default function Home() {
                     border: '3px solid #000',
                     display: 'flex',
                     alignItems: 'center',
-                    justifyContent: 'center',
-                    fontSize: '2.5rem'
+                    justifyContent: 'center'
                   }}>
-                    {['💻', '🌐', '✈️', '🔬', '🚛', '🏥'][idx % 6]}
+                    {(() => {
+                      const Icon = projectIcons[idx % projectIcons.length];
+                      return <Icon size={40} strokeWidth={2.5} />;
+                    })()}
                   </div>
                 </div>
 
@@ -983,7 +998,7 @@ export default function Home() {
             <p style={{ fontSize: '1rem', color: '#fff', textAlign: 'center', fontWeight: 600 }}>
               ElianaBarturen.github.io
             </p>
-            <p style={{ fontSize: '0.85rem', color: '#666', textAlign: 'center' }}>
+            <p style={{ fontSize: '0.85rem', color: '#ccc', textAlign: 'center' }}>
               © 2024 Eliana Barturen. Todos los derechos reservados.
             </p>
           </div>

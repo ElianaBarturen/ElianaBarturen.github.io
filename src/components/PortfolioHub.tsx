@@ -1,9 +1,9 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useMemo } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useLanguage } from '../contexts/LanguageContext';
-import { portfolioData } from '../data/portfolio';
+import { getPortfolioData } from '../data/portfolio';
 import { ChevronLeft, ChevronRight, Code2, Smartphone, Database, Bug, Server, Briefcase, ExternalLink, Github } from 'lucide-react';
 
 const categoryIcons = {
@@ -17,12 +17,15 @@ const categoryIcons = {
 type Tab = 'about' | 'skills' | 'projects' | 'experience';
 
 export default function PortfolioHub() {
-  const { t } = useLanguage();
+  const { t, language } = useLanguage();
   const [currentTab, setCurrentTab] = useState<Tab>('projects');
   const [currentProjectPage, setCurrentProjectPage] = useState(0);
   const [skillPageByCategory, setSkillPageByCategory] = useState<Record<string, number>>({});
   const projectsPerPage = 2;
   const skillsPerCategoryPerPage = 4;
+
+  // Obtener datos del portfolio según el idioma actual
+  const portfolioData = useMemo(() => getPortfolioData(language), [language]);
 
   const skillsByCategory = portfolioData.skills.reduce((acc, skill) => {
     if (!acc[skill.category]) {
@@ -250,7 +253,7 @@ export default function PortfolioHub() {
                     className="px-6 py-3 rounded-full bg-gray-100 text-text-dark font-semibold text-sm shadow-soft disabled:opacity-50 disabled:cursor-not-allowed hover:bg-gray-200 transition-all flex items-center gap-2"
                   >
                     <ChevronLeft size={18} />
-                    Anterior
+                    {t.pagination.previous}
                   </button>
                   <div className="flex gap-2">
                     {Array.from({ length: totalProjectPages }).map((_, idx) => (
@@ -272,7 +275,7 @@ export default function PortfolioHub() {
                     disabled={currentProjectPage === totalProjectPages - 1}
                     className="px-6 py-3 rounded-full bg-gray-100 text-text-dark font-semibold text-sm shadow-soft disabled:opacity-50 disabled:cursor-not-allowed hover:bg-gray-200 transition-all flex items-center gap-2"
                   >
-                    Siguiente
+                    {t.pagination.next}
                     <ChevronRight size={18} />
                   </button>
                 </div>

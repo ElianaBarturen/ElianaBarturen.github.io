@@ -1,9 +1,9 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useMemo } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Send, Bot, X, Download, Sparkles, ChevronLeft, ChevronRight } from 'lucide-react';
-import { portfolioData } from '../data/portfolio';
+import { getPortfolioData } from '../data/portfolio';
 import { useLanguage } from '../contexts/LanguageContext';
 import html2canvas from 'html2canvas';
 import jsPDF from 'jspdf';
@@ -29,6 +29,9 @@ export default function Chatbot() {
   const [isTyping, setIsTyping] = useState(false);
   const [messagePage, setMessagePage] = useState(0);
   const messagesPerPage = 5;
+
+  // Obtener datos del portfolio según el idioma actual
+  const portfolioData = useMemo(() => getPortfolioData(language), [language]);
 
   const totalMessagePages = Math.ceil(messages.length / messagesPerPage);
   const displayedMessages = messages.slice(
@@ -58,13 +61,15 @@ export default function Chatbot() {
       }
     };
 
+    const experienceText = language === 'es' ? 'en' : 'at';
+
     return {
       profile: descriptions[language][type.toLowerCase()] || descriptions[language].fullstack,
       role: language === 'es' 
         ? `Desarrolladora ${type.charAt(0).toUpperCase() + type.slice(1)}`
         : `${type.charAt(0).toUpperCase() + type.slice(1)} Developer`,
       skills: skills.length > 0 ? skills : portfolioData.skills.slice(0, 6).map(s => s.name),
-      experience: portfolioData.experience.map(e => `${e.role} en ${e.company}: ${e.description}`),
+      experience: portfolioData.experience.map(e => `${e.role} ${experienceText} ${e.company}: ${e.description}`),
       education: language === 'es' 
         ? "Ingeniería de Sistemas - Universidad Nacional de Ingeniería"
         : "Systems Engineering - National University of Engineering"

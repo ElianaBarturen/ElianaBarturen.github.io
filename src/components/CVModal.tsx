@@ -3,6 +3,7 @@
 import { motion, AnimatePresence } from 'framer-motion';
 import { X, Download, Code2, Server, Smartphone, Bug, Layers } from 'lucide-react';
 import { generateCV, cvRoles } from '../lib/cvGenerator';
+import { useLanguage } from '../contexts/LanguageContext';
 
 interface CVModalProps {
     isOpen: boolean;
@@ -25,17 +26,39 @@ const roleColors: Record<string, string> = {
     'QA': '#FF9500'
 };
 
-const roleDescriptions: Record<string, string> = {
-    'Full Stack': 'CV completo con todas las habilidades Frontend, Backend, Mobile y más.',
-    'Frontend': 'Enfocado en React, Next.js, Flutter Web, UI/UX y diseño responsive.',
-    'Backend': 'APIs REST, NestJS, bases de datos, arquitectura y cloud.',
-    'Mobile': 'Flutter, Kotlin, Firebase, apps nativas y multiplataforma.',
-    'QA': 'Testing, SQL, análisis de datos y aseguramiento de calidad.'
+const labels = {
+    es: {
+        title: 'Descargar CV',
+        description: 'Selecciona el tipo de CV que deseas descargar. Cada versión está optimizada para resaltar las habilidades relevantes del área seleccionada.',
+        footer: 'Formato PDF • Diseño Harvard • Optimizado para ATS',
+        descriptions: {
+            'Full Stack': 'CV completo con todas las habilidades Frontend, Backend, Mobile y más.',
+            'Frontend': 'Enfocado en React, Next.js, Flutter Web, UI/UX y diseño responsive.',
+            'Backend': 'APIs REST, NestJS, bases de datos, arquitectura y cloud.',
+            'Mobile': 'Flutter, Kotlin, Firebase, apps nativas y multiplataforma.',
+            'QA': 'Testing, SQL, análisis de datos y aseguramiento de calidad.'
+        }
+    },
+    en: {
+        title: 'Download CV',
+        description: 'Select the type of CV you want to download. Each version is optimized to highlight the skills relevant to the selected area.',
+        footer: 'PDF Format • Harvard Design • ATS Optimized',
+        descriptions: {
+            'Full Stack': 'Complete CV covering Frontend, Backend, Mobile skills and more.',
+            'Frontend': 'Focused on React, Next.js, Flutter Web, UI/UX and responsive design.',
+            'Backend': 'REST APIs, NestJS, databases, architecture and cloud.',
+            'Mobile': 'Flutter, Kotlin, Firebase, native and cross-platform apps.',
+            'QA': 'Testing, SQL, data analysis and quality assurance.'
+        }
+    }
 };
 
 export default function CVModal({ isOpen, onClose }: CVModalProps) {
+    const { language } = useLanguage();
+    const currentLabels = labels[language];
+
     const handleDownload = (role: typeof cvRoles[number]) => {
-        generateCV(role);
+        generateCV(role, language);
         onClose();
     };
 
@@ -94,7 +117,7 @@ export default function CVModal({ isOpen, onClose }: CVModalProps) {
                                     gap: '12px'
                                 }}>
                                     <Download size={24} />
-                                    Descargar CV
+                                    {currentLabels.title}
                                 </h2>
                                 <button
                                     onClick={onClose}
@@ -118,8 +141,7 @@ export default function CVModal({ isOpen, onClose }: CVModalProps) {
                                     fontSize: '0.95rem',
                                     lineHeight: 1.6
                                 }}>
-                                    Selecciona el tipo de CV que deseas descargar. Cada versión está optimizada
-                                    para resaltar las habilidades relevantes del área seleccionada.
+                                    {currentLabels.description}
                                 </p>
 
                                 {/* Role Options */}
@@ -127,7 +149,7 @@ export default function CVModal({ isOpen, onClose }: CVModalProps) {
                                     {cvRoles.map((role) => {
                                         const Icon = roleIcons[role];
                                         const color = roleColors[role];
-                                        const description = roleDescriptions[role];
+                                        const description = currentLabels.descriptions[role] || '';
 
                                         return (
                                             <motion.button
@@ -171,6 +193,7 @@ export default function CVModal({ isOpen, onClose }: CVModalProps) {
                                                         color: '#000'
                                                     }}>
                                                         CV {role}
+                                                        {language === 'en' && role === 'Full Stack' ? ' (Recommended)' : ''}
                                                     </h3>
                                                     <p style={{
                                                         fontSize: '0.85rem',
@@ -195,7 +218,7 @@ export default function CVModal({ isOpen, onClose }: CVModalProps) {
                                     fontSize: '0.8rem',
                                     color: '#999'
                                 }}>
-                                    Formato PDF • Diseño Harvard • Optimizado para ATS
+                                    {currentLabels.footer}
                                 </p>
                             </div>
                         </motion.div>

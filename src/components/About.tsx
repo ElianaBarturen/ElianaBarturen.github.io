@@ -1,8 +1,9 @@
 'use client';
 
+import { useMemo } from 'react';
 import { motion } from 'framer-motion';
 import { useLanguage } from '../contexts/LanguageContext';
-import { portfolioData } from '../data/portfolio';
+import { getPortfolioData } from '../data/portfolio';
 import { Code2, Smartphone, Database, Bug, Server } from 'lucide-react';
 
 const categoryIcons = {
@@ -14,7 +15,11 @@ const categoryIcons = {
 };
 
 export default function About() {
-  const { t } = useLanguage();
+  const { t, language } = useLanguage();
+  
+  // Obtener datos del portfolio según el idioma actual
+  const portfolioData = useMemo(() => getPortfolioData(language), [language]);
+
   const skillsByCategory = portfolioData.skills.reduce((acc, skill) => {
     if (!acc[skill.category]) {
       acc[skill.category] = [];
