@@ -80,7 +80,7 @@ const cvData: Record<Language, CVData> = {
             {
                 company: 'Unidad Ejecutora de Salud Santa Cruz - OITE',
                 role: 'Practicante de Sistemas',
-                period: 'Ene 2024 - Feb 2024',
+                period: 'Ene 2024 - Marzo 2024',
                 achievements: [
                     'Desarrollo de consultas SQL avanzadas para extracción y análisis de información.',
                     'Diseño y mantenimiento de estructuras de bases de datos PostgreSQL y SQL Server.',

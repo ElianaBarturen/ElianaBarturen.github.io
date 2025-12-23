@@ -83,7 +83,7 @@ const portfolioDataByLanguage: Record<Language, Omit<PortfolioData, 'skills'>> =
             {
                 company: "Unidad Ejecutora de Salud Santa Cruz",
                 role: "Practicante OITE",
-                period: "Ene 2024 - Feb 2024",
+                period: "Ene 2024 - Marzo 2024",
                 description: "Desarrollo de consultas SQL avanzadas (PostgreSQL, SQL Server). Soporte en sistemas SIGA y SIAF. Gestión de usuarios y permisos a nivel de microrred.",
             },
         ],
